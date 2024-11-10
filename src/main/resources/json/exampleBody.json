@@ -1,0 +1,22 @@
+{
+  "vendor": {
+    "id": "VD001",
+    "name": "Wellington Farias",
+    "notUsed": "123",
+    "payments": [
+      {
+        "id": "PAY001",
+        "payDay": "2024-11-07",
+        "amountPaid": "1500.00",
+        "testField": "Teste",
+        "status": ""
+      },
+      {
+        "id": "PAY002",
+        "payDay": "2024-11-08",
+        "amountPaid": "1900.00",
+        "status": ""
+      }
+    ]
+  }
+}
