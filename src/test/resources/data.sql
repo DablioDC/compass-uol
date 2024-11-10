@@ -22,9 +22,4 @@ CREATE TABLE payment (
     CONSTRAINT fk_id_vendor_pay FOREIGN KEY (id_vendor) REFERENCES vendor(id)
 );
 
-INSERT INTO vendor (id, name_vendor) VALUES ('VD001', 'Wellington Farias');
-INSERT INTO vendor (id, name_vendor) VALUES ('VD002', 'Diego Cardoso');
 
-INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('PAY001', '2024-10-07', 1500.00, null, 'VD001');
-INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('PAY002', '2024-11-08', 2000.00, null, 'VD001');
-INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('PAY003', '2024-11-05', 2000.00, null, 'VD002');

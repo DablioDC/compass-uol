@@ -19,7 +19,7 @@ public class ValidatePaymentServiceImp implements ValidatePaymentService {
     public PaymentDTO validateAndSend(PaymentDTO payment, Charge charge) {
         for (PaymentValidationStrategy strategy : validationStrategies) {
             if (strategy.validate(payment, charge)) {
-                payment.setPaymentStatus(strategy.getPaymentType());
+                payment.setPaymentStatusEnum(strategy.getPaymentType());
                 return queueService.sendToQueue(strategy.getQueueName(), payment);
             }
         }

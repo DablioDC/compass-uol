@@ -14,4 +14,8 @@ import java.io.Serializable;
 public class Vendor implements Serializable {
     @Id
     private String id;
+
+    public Vendor(String idVendor) {
+        this.id = idVendor;
+    }
 }

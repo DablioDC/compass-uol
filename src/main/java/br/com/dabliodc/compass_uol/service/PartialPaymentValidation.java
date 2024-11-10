@@ -2,7 +2,7 @@ package br.com.dabliodc.compass_uol.service;
 
 import br.com.dabliodc.compass_uol.domain.PaymentDTO;
 import br.com.dabliodc.compass_uol.model.Charge;
-import br.com.dabliodc.compass_uol.utils.PaymentStatus;
+import br.com.dabliodc.compass_uol.utils.PaymentStatusEnum;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,8 +13,8 @@ public class PartialPaymentValidation implements PaymentValidationStrategy {
     }
 
     @Override
-    public PaymentStatus getPaymentType() {
-        return PaymentStatus.PARCIAL;
+    public PaymentStatusEnum getPaymentType() {
+        return PaymentStatusEnum.PARCIAL;
     }
 
     @Override

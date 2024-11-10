@@ -1,6 +1,6 @@
 package br.com.dabliodc.compass_uol.model;
 
-import br.com.dabliodc.compass_uol.utils.PaymentStatus;
+import br.com.dabliodc.compass_uol.utils.PaymentStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +22,8 @@ public class Payment implements Serializable {
     private LocalDate payDay;
     @Column(name = "amount_paid")
     private BigDecimal amountPaid;
-    @Column(name = "payment_type")
-    private PaymentStatus paymentStatus;
+    @Column(name = "payment_status")
+    private PaymentStatusEnum paymentStatusEnum;
 
     public Payment builder(){
         return new Payment();
@@ -49,8 +49,8 @@ public class Payment implements Serializable {
         return this;
     }
 
-    public Payment setPaymentStatus(PaymentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public Payment setPaymentStatusEnum(PaymentStatusEnum paymentStatusEnum) {
+        this.paymentStatusEnum = paymentStatusEnum;
         return this;
     }
 }

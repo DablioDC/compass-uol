@@ -8,7 +8,7 @@ public class MockQueueService implements QueueService {
     @Override
     public <T> T sendToQueue(String queueUrl, T message) {
         if (message instanceof PaymentDTO payment) {
-            payment.setPaymentStatus(payment.getPaymentStatus());
+            payment.setPaymentStatusEnum(payment.getPaymentStatusEnum());
         }
         return message;
     }

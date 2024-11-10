@@ -1,6 +1,6 @@
 package br.com.dabliodc.compass_uol.model;
 
-import br.com.dabliodc.compass_uol.utils.PaymentStatus;
+import br.com.dabliodc.compass_uol.utils.PaymentStatusEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class Charge implements Serializable {
     @Column(name = "value_charge")
     private BigDecimal valueCharge;
     @Column(name = "payment_status")
-    private PaymentStatus paymentStatus;
+    private PaymentStatusEnum paymentStatusEnum;
     @ManyToOne
     @JoinColumn(name = "id_vendor", nullable = false)
     private Vendor vendor;
@@ -47,8 +47,8 @@ public class Charge implements Serializable {
         return this;
     }
 
-    public Charge setPaymentStatus(PaymentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
+    public Charge setPaymentStatusEnum(PaymentStatusEnum paymentStatusEnum) {
+        this.paymentStatusEnum = paymentStatusEnum;
         return this;
     }
 

@@ -10,7 +10,7 @@ import br.com.dabliodc.compass_uol.model.Vendor;
 import br.com.dabliodc.compass_uol.repository.ChargeRepository;
 import br.com.dabliodc.compass_uol.repository.PaymentRepository;
 import br.com.dabliodc.compass_uol.repository.VendorRepository;
-import br.com.dabliodc.compass_uol.utils.PaymentStatus;
+import br.com.dabliodc.compass_uol.utils.PaymentStatusEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -64,11 +64,6 @@ public class PaymentServiceImp implements PaymentService {
                         messageSource.getMessage("error.vendor.notfound", new Object[]{vendorDTO.getId()}, Locale.forLanguageTag("pt-BR"))));
     }
 
-    @Override
-    public ResponseEntity<List<Object>> searchCharges(Object object) {
-        return null;
-    }
-
     private List<Charge> validateCharge(VendorDTO vendorDTO) {
         List<Charge> chargeList = new ArrayList<>();
         for (PaymentDTO paymentDTO : vendorDTO.getPaymentDTOS()) {
@@ -93,7 +88,7 @@ public class PaymentServiceImp implements PaymentService {
                 .orElse(null);
         PaymentDTO updatedPayment = validatePaymentServiceImp.validateAndSend(paymentDTO, charge);
         savePayment(updatedPayment, vendor);
-        updateCharge(charge, updatedPayment.getPaymentStatus());
+        updateCharge(charge, updatedPayment.getPaymentStatusEnum());
         return updatedPayment;
     }
 
@@ -103,12 +98,12 @@ public class PaymentServiceImp implements PaymentService {
                 .setVendor(vendor)
                 .setPayDay(paymentDTO.getPayDay())
                 .setAmountPaid(paymentDTO.getAmountPaid())
-                .setPaymentStatus(paymentDTO.getPaymentStatus());
+                .setPaymentStatusEnum(paymentDTO.getPaymentStatusEnum());
         paymentRepository.save(payment);
     }
 
-    private void updateCharge(Charge charge, PaymentStatus paymentStatus) {
-        charge.setPaymentStatus(paymentStatus);
+    private void updateCharge(Charge charge, PaymentStatusEnum paymentStatusEnum) {
+        charge.setPaymentStatusEnum(paymentStatusEnum);
         chargeRepository.save(charge);
     }
 }

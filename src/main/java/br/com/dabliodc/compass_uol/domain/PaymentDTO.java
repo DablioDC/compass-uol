@@ -1,6 +1,6 @@
 package br.com.dabliodc.compass_uol.domain;
 
-import br.com.dabliodc.compass_uol.utils.PaymentStatus;
+import br.com.dabliodc.compass_uol.utils.PaymentStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,5 @@ public class PaymentDTO implements Serializable {
     private String id;
     private LocalDate payDay;
     private BigDecimal amountPaid;
-    private PaymentStatus paymentStatus;
+    private PaymentStatusEnum paymentStatusEnum;
 }

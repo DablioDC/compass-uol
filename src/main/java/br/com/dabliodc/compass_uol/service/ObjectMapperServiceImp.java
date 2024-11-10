@@ -16,7 +16,7 @@ public class ObjectMapperServiceImp implements ObjectMapperService {
     @Override
     public VendorDTO mapperPayments(Object object) {
         return objectMapper.convertValue(
-                objectMapper.convertValue(object, Map.class).get("vendor"),
+                objectMapper.convertValue(object, Map.class),
                 VendorDTO.class
         );
     }

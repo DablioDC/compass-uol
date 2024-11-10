@@ -9,6 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class VendorDTO implements Serializable{
+    @JsonProperty("vendor_id")
     private String id;
     @JsonProperty("payments")
     private List<PaymentDTO> paymentDTOS;
