@@ -1,0 +1,21 @@
+{
+  "vendor_id": "WD001",
+  "payments": [
+    {
+      "id": "GRE001",
+      "payDay": "2024-11-10",
+      "amountPaid": "100.00"
+    },
+    {
+      "id": "GRE002",
+      "payDay": "2024-11-10",
+      "amountPaid": "190.00"
+    },
+    {
+      "id": "GRE003",
+      "payDay": "2024-11-10",
+      "amountPaid": "260.00"
+    }
+  ]
+}
+

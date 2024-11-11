@@ -5,27 +5,20 @@ import br.com.dabliodc.compass_uol.domain.VendorDTO;
 import br.com.dabliodc.compass_uol.model.Charge;
 import br.com.dabliodc.compass_uol.model.Vendor;
 import br.com.dabliodc.compass_uol.repository.ChargeRepository;
-import br.com.dabliodc.compass_uol.repository.PaymentRepository;
 import br.com.dabliodc.compass_uol.repository.VendorRepository;
-import org.junit.jupiter.api.BeforeEach;
+import br.com.dabliodc.compass_uol.utils.PaymentStatusEnum;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(SpringExtension.class)
 class PaymentServiceImpTest {
-    @Mock
-    private ObjectMapperService objectMapperService;
 
     @Mock
     private ChargeRepository chargeRepository;
@@ -34,61 +27,73 @@ class PaymentServiceImpTest {
     private VendorRepository vendorRepository;
 
     @Mock
-    private PaymentRepository paymentRepository;
+    private PaymentServiceImp paymentServiceImp;
 
     @Mock
     private ValidatePaymentServiceImp validatePaymentServiceImp;
 
-    @Mock
-    private MessageSource messageSource;
-
-    @InjectMocks
-    private PaymentServiceImp paymentServiceImp;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
+    @Test
+    void vendorNotFound() {
+        VendorDTO vendorDTO = new VendorDTO("XW001", List.of(
+                new PaymentDTO("GRE001", LocalDate.now(), BigDecimal.valueOf(100), null)));
+        Mockito.when(paymentServiceImp.validatePayment(vendorDTO)).thenReturn(null);
     }
 
     @Test
-    void validatePaymentShouldReturn200WhenPaymentIsValid() {
-        Vendor vendor = createVendor("VD001");
+    void chargeNotFound() {
+        VendorDTO vendorDTO = new VendorDTO("WD001", List.of(
+                new PaymentDTO("T1001", LocalDate.now(), BigDecimal.valueOf(100), null)));
+        Mockito.when(paymentServiceImp.validatePayment(vendorDTO)).thenReturn(null);
+    }
+
+    @Test
+    void validatePaymentTotal() {
+        Vendor vendor = createVendor("VT001");
         vendorRepository.save(vendor);
-        Charge charge = createCharge("CHG001", vendor, BigDecimal.valueOf(1500));
+        Charge charge = createCharge("CT001", vendor, BigDecimal.valueOf(1000));
         chargeRepository.save(charge);
+        PaymentDTO paymentDTO = createPaymentDTO("CT001", BigDecimal.valueOf(1000));
+        PaymentDTO validatedPaymentDTO = createPaymentDTO("CT001", BigDecimal.valueOf(1000));
 
-        VendorDTO vendorDTO = createVendorDTO(vendor.getId(), charge.getId(), charge.getValueCharge());
+        validatedPaymentDTO.setPaymentStatusEnum(PaymentStatusEnum.TOTAL);
+        Mockito.when(validatePaymentServiceImp.validateAndSend(paymentDTO, charge)).thenReturn(validatedPaymentDTO);
 
-        Mockito.when(vendorRepository.findById("VD001")).thenReturn(Optional.of(vendor));
-        Mockito.when(chargeRepository.findByIdAndVendor_Id("CHG001", "VD001")).thenReturn(Optional.of(charge));
+        PaymentDTO result = validatePaymentServiceImp.validateAndSend(paymentDTO, charge);
 
-        ResponseEntity<Object> response = paymentServiceImp.validatePayment(vendorDTO);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(PaymentStatusEnum.TOTAL, result.getPaymentStatusEnum());
     }
 
     @Test
-    void validatePaymentShouldReturn404WhenVendorNotFound() {
-        Object inputObject = new Object();
-        VendorDTO vendorDTO = new VendorDTO("VD002", List.of());
-        Mockito.when(objectMapperService.mapperPayments(inputObject)).thenReturn(vendorDTO);
-        Mockito.when(vendorRepository.findById("VD002")).thenReturn(Optional.empty());
-        Mockito.when(messageSource.getMessage("error.vendor.notfound", new Object[]{"VD002"}, Locale.getDefault())).thenReturn("Vendor not found");
+    void validatePaymentPartial() {
+        Vendor vendor = createVendor("VT001");
+        vendorRepository.save(vendor);
+        Charge charge = createCharge("CT001", vendor, BigDecimal.valueOf(1500));
+        chargeRepository.save(charge);
+        PaymentDTO paymentDTO = createPaymentDTO("CT001", BigDecimal.valueOf(1000));
+        PaymentDTO validatedPaymentDTO = createPaymentDTO("CT001", BigDecimal.valueOf(1000));
 
-        ResponseEntity<Object> response = paymentServiceImp.validatePayment(inputObject);
+        validatedPaymentDTO.setPaymentStatusEnum(PaymentStatusEnum.PARCIAL);
+        Mockito.when(validatePaymentServiceImp.validateAndSend(paymentDTO, charge)).thenReturn(validatedPaymentDTO);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Vendor not found", response.getBody());
+        PaymentDTO result = validatePaymentServiceImp.validateAndSend(paymentDTO, charge);
+
+        assertEquals(PaymentStatusEnum.PARCIAL, result.getPaymentStatusEnum());
     }
 
     @Test
-    void validatePaymentShouldReturn400WhenExceptionOccurs() {
-        Object inputObject = new Object();
-        Mockito.when(objectMapperService.mapperPayments(inputObject)).thenThrow(new RuntimeException("Unexpected error"));
+    void validatePaymentExceed() {
+        Vendor vendor = createVendor("VT001");
+        vendorRepository.save(vendor);
+        Charge charge = createCharge("CT001", vendor, BigDecimal.valueOf(1500));
+        chargeRepository.save(charge);
+        PaymentDTO paymentDTO = createPaymentDTO("CT001", BigDecimal.valueOf(2000));
+        PaymentDTO validatedPaymentDTO = createPaymentDTO("CT001", BigDecimal.valueOf(2000));
 
-        ResponseEntity<Object> response = paymentServiceImp.validatePayment(inputObject);
+        validatedPaymentDTO.setPaymentStatusEnum(PaymentStatusEnum.EXCEDENTE);
+        Mockito.when(validatePaymentServiceImp.validateAndSend(paymentDTO, charge)).thenReturn(validatedPaymentDTO);
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Erro ao processar o pagamento: Unexpected error", response.getBody());
+        PaymentDTO result = validatePaymentServiceImp.validateAndSend(paymentDTO, charge);
+        assertEquals(PaymentStatusEnum.EXCEDENTE, result.getPaymentStatusEnum());
     }
 
     public Vendor createVendor(String vendor_id){
@@ -96,16 +101,19 @@ class PaymentServiceImpTest {
     }
 
     public Charge createCharge(String idCharge, Vendor vendor, BigDecimal valueCharge){
-        Charge charge = new Charge().builder()
+        return new Charge().builder()
                 .setId(idCharge)
                 .setVendor(vendor)
                 .setPayDay(LocalDate.now())
                 .setValueCharge(valueCharge)
                 .setPaymentStatusEnum(null);
-        return charge;
     }
 
-    public VendorDTO createVendorDTO(String idVendor, String idPayment, BigDecimal valuePayment){
-        return new VendorDTO(idVendor, List.of(new PaymentDTO(idPayment, LocalDate.now(), valuePayment, null)));
+    public PaymentDTO createPaymentDTO(String id, BigDecimal amountPaid){
+        PaymentDTO paymentDTO = new PaymentDTO();
+        paymentDTO.setId(id);
+        paymentDTO.setPayDay(LocalDate.now());
+        paymentDTO.setAmountPaid(amountPaid);
+        return paymentDTO;
     }
 }

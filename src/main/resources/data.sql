@@ -1,7 +1,6 @@
 -- Criação de tabelas e script população de dados para utilização nos testes
 CREATE TABLE vendor (
-    id VARCHAR(20) PRIMARY KEY,
-    name_vendor VARCHAR(150)
+    id VARCHAR(20) PRIMARY KEY
 );
 
 CREATE TABLE charge (
@@ -22,9 +21,13 @@ CREATE TABLE payment (
     CONSTRAINT fk_id_vendor_pay FOREIGN KEY (id_vendor) REFERENCES vendor(id)
 );
 
-INSERT INTO vendor (id, name_vendor) VALUES ('VD001', 'Wellington Farias');
-INSERT INTO vendor (id, name_vendor) VALUES ('VD002', 'Diego Cardoso');
+INSERT INTO vendor (id) VALUES ('VD001');
+INSERT INTO vendor (id) VALUES ('VD002');
+INSERT INTO vendor (id) VALUES ('WD001');
 
 INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('PAY001', '2024-10-07', 1500.00, null, 'VD001');
 INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('PAY002', '2024-11-08', 2000.00, null, 'VD001');
 INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('PAY003', '2024-11-05', 2000.00, null, 'VD002');
+INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('GRE001', '2024-11-11', 100.00, null, 'WD001');
+INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('GRE002', '2024-11-11', 200.00, null, 'WD001');
+INSERT INTO charge (id, pay_day, value_charge, payment_status, id_vendor) VALUES ('GRE003', '2024-11-11', 250.00, null, 'WD001');

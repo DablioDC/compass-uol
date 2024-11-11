@@ -28,8 +28,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PaymentServiceImp implements PaymentService {
     @Autowired
-    private final ObjectMapperService objectMapperService;
-    @Autowired
     private final ChargeRepository chargeRepository;
     @Autowired
     private final VendorRepository vendorRepository;
@@ -41,10 +39,8 @@ public class PaymentServiceImp implements PaymentService {
     private final MessageSource messageSource;
 
     @Override
-    public ResponseEntity<Object> validatePayment(Object object) {
+    public ResponseEntity<Object> validatePayment(VendorDTO vendorDTO) {
         try {
-            VendorDTO vendorDTO = objectMapperService.mapperPayments(object);
-
             Vendor vendor = validateVendor(vendorDTO);
             List<Charge> chargeList = validateCharge(vendorDTO);
             var vendorDTOUpdate = processPayments(vendorDTO, vendor, chargeList);
